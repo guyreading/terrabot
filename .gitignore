@@ -3,4 +3,5 @@
 /processed data
 __pycache__
 .idea
+.ipynb_checkpoints
 Terravis.lnk
