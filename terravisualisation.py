@@ -1,4 +1,6 @@
-"""terravisualisation contains all the board visualisation functions for terraBot
+"""terravisualisation contains all the data processing & matplotlib graphing functions related to board visualisation
+functions for terraBot. However for an interaction GUI, this function is contained in "terravisgui". This GUI uses
+the tools built in terravisualisation.
 """
 
 import numpy as np
