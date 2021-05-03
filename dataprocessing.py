@@ -6,7 +6,7 @@ def select_games():
     """
     import pandas as pd
 
-    folderlocation = "C:/Users/User1/PycharmProjects/TerraBot/terra-mystica"
+    folderlocation = "D:/PycharmProjects/TerraBot/terra-mystica"
 
     stats = pd.read_csv(f'{folderlocation}/games.csv')
 
