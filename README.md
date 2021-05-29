@@ -8,3 +8,11 @@ Currently, there are two main aspects to the repository:
 2. Developing a model that learns which faction to pick based on starting information (round tiles,
    bonus tiles, other factions picked). This is in development.
    
+## Data provenance
+The original (noted as "local" in the notebooks) data came from the 
+[Kaggle dataset](https://www.kaggle.com/lemonkoala/terra-mystica).
+
+A future development direction is to use the 
+[orignal snellman data from source](https://terra.snellman.net/data), however json
+manipulation is needed and for now the local csv data is used for ease.
+   
