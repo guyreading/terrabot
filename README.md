@@ -23,3 +23,8 @@ The data for a faction picker bot is hosted on
 The script used to create this data can be found in this repo at `faction-picker-bot/creatingVPdata.ipynb`.
 
 I am currently in the process of training a model to pick the best faction based on intial game states.
+
+Notes to self:
+1. Set up DVC & connect to AWS for practice
+2. add data prep to dvc pipeline
+3. add model training step to dvc pipeline
