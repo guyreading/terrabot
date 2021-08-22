@@ -1,0 +1,15 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: papermill faction-picker-bot\creatingVPdata.ipynb -
+    deps:
+    - path: faction-picker-bot\creatingVPdata.ipynb
+      md5: bf8c884a44f23f55a61222eb9d880c62
+      size: 148883
+    outs:
+    - path: data\faction-picker-bot\featdata.csv
+      md5: 5dda00d27d92c9ac4c288cfcb5895e00
+      size: 18096094
+    - path: data\faction-picker-bot\vpdata.csv
+      md5: b532b6155ebb08303c7fa51b7f5346a1
+      size: 5433991

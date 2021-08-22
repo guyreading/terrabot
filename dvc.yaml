@@ -1,6 +1,8 @@
 stages:
   prepare:
-    cmd: python faction-picker-bot/make_data.py
+    cmd: papermill faction-picker-bot\creatingVPdata.ipynb -
     outs:
-      - data/faction-picker-bot/featdata.csv
-      - data/faction-picker-bot/vpdata.csv
+      - data\faction-picker-bot\featdata.csv
+      - data\faction-picker-bot\vpdata.csv
+    deps:
+      - faction-picker-bot\creatingVPdata.ipynb
