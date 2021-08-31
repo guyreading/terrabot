@@ -6,3 +6,6 @@ stages:
       - data\faction-picker-bot\vpdata.csv
     deps:
       - faction-picker-bot\creatingVPdata.ipynb
+  prepare-step2:
+    cmd: python create_individual_datasets.py
+

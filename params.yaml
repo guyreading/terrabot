@@ -1,0 +1,5 @@
+prepare:
+  vp-data-dir: 'D://PycharmProjects/TerraBot/data/faction-picker-bot/vpdata.csv'
+  feature-data-dir: 'D://PycharmProjects/TerraBot/data/faction-picker-bot/featdata.csv'
+prepare-step2:
+  pickle-dir: 'D://PycharmProjects/TerraBot/data/faction-picker-bot/each-faction-data.pkl'
