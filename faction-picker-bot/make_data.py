@@ -1,12 +1,14 @@
 import pandas as pd
 import numpy as np
+import argparse
 import math
 import time
+import yaml
 
-def main():
+
+def main(folderlocation, vpdfdir, featdfdir, playerdropdir):
     """This is the script version of creatingVPdata.ipynb for the dvc pipeline."""
     # load data in
-    folderlocation = "D:/PycharmProjects/TerraBot/terra-mystica"
     gameevents = pd.read_csv(f'{folderlocation}/game_events.csv')
     games = pd.read_csv(f'{folderlocation}/games.csv')
     gameslist = list(pd.unique(gameevents['game']))
@@ -173,6 +175,125 @@ def main():
     badgames = games[games["player_count"].isin([1, 6, 7])]
     data = filteringByBadgames(data, badgames)
 
+    extendedfactions = validfactions + ['dragonlords', 'riverwalkers', 'yetis', 'icemaidens', 'shapeshifters', 'acolytes']
 
-if __name__ == "__main__":
-    main()
+    def check_game_ended(singlegame, verbose=False):
+        r5 = singlegame[singlegame['round'] == 5]
+        rawfactions = pd.unique(singlegame['faction'])
+        verifiedfactions = [rawfaction for rawfaction in rawfactions if rawfaction in extendedfactions]
+        allbool = []
+
+        for faction in verifiedfactions:
+            factionbool = len(r5[(r5['faction'] == faction)  & (r5['event'].str.startswith('pass'))]) == 1
+            allbool.append(factionbool)
+
+            if verbose:
+                print(f'faction: {faction} ended their turn?: {factionbool}')
+
+        isgood = all(allbool)
+        startplayers = len(verifiedfactions)
+        boolsum = sum(allbool)
+        playersdropped = startplayers - boolsum
+
+        return isgood, startplayers, playersdropped
+
+    gameevents = data['gameevents']
+    gameslist = list(pd.unique(gameevents['game']))
+
+    gamelengthlen = len(gameslist)
+    gamesroundup = math.ceil(gamelengthlen / 100.0) * 100
+    jj = 0
+    playerdropdf = pd.DataFrame(columns=['game', 'nodrops', 'startplayers', 'playersdropped'])
+
+    for ii in range(100, gamesroundup+1, 100):
+        ii = min(ii, gamelengthlen)
+        if (ii % 10000) == 0:  # update every 10000 games
+            print(f'Progressed to {ii}th game')
+
+        next100games = gameslist[jj:ii]
+        jj = ii  # so that we don't get any repetitions at the very end, where our set will be smaller
+
+        gameevents100 = gameevents[gameevents['game'].isin(next100games)]
+
+        for game in next100games:
+            singlegame = gameevents100[gameevents100['game'] == game]
+
+            if not len(singlegame) == 0:
+                isgood, startplayers, playersdropped = check_game_ended(singlegame)
+                newdf = pd.DataFrame([[game, isgood, startplayers, playersdropped]], columns=['game', 'nodrops', 'startplayers', 'playersdropped'])
+                playerdropdf = playerdropdf.append(newdf, ignore_index=True)
+
+    playerdropdf['endplayers'] = playerdropdf['startplayers'] - playerdropdf['playersdropped']
+    playerdropdf.to_csv(playerdropdir)
+
+    badgames = playerdropdf[playerdropdf['endplayers'].isin([0, 1])]
+    data = filteringByBadgames(data, badgames)
+
+    # removing unwanted maps
+    acceptablemaps = ['126fe960806d587c78546b30f1a90853b1ada468',
+                      '95a66999127893f5925a5f591d54f8bcb9a670e6',
+                      'be8f6ebf549404d015547152d5f2a1906ae8dd90']
+
+    badgames = games[~games["base_map"].isin(acceptablemaps)]
+    data = filteringByBadgames(data, badgames)
+
+    # creating full dataset
+    vpdf, _, _ = makenewdf()
+    featdf, _ = emptyfeaturesdf()
+
+    gameevents = data['gameevents']
+    games = data['games']
+    gamescoringtiles = data['gamescoringtiles']
+
+    gameslist = list(pd.unique(gameevents['game']))
+    gamelengthlen = len(gameslist)
+    gamesroundup = math.ceil(gamelengthlen / 100.0) * 100
+    jj = 0
+
+    for ii in range(100, gamesroundup+1, 100):
+        ii = min(ii, gamelengthlen)
+        if (ii % 10000) == 0:  # update every 10000 games
+            print(f'Progressed to {ii}th game')
+
+        next100games = gameslist[jj:ii]
+        jj = ii  # so that we don't get any repetitions at the very end, where our set will be smaller
+
+        gameevents100 = gameevents[gameevents['game'].isin(next100games)]
+        gamemeta100 = games[games['game'].isin(next100games)]
+        gameST100 = gamescoringtiles[gamescoringtiles['game'].isin(next100games)]
+        endplayers100 = playerdropdf[playerdropdf['game'].isin(next100games)]  # use this for player count
+
+        for game in next100games:
+            singlegame = gameevents100[gameevents100['game'] == game]
+            singlegamemeta = gamemeta100[gamemeta100['game'] == game]
+            singlegameST = gameST100[gameST100['game'] == game]
+            singleendplayers = endplayers100[endplayers100['game'] == game]
+
+            if not len(singlegame) == 0:
+                vpforgame = get_vp_from_game(singlegame)
+                featsforgame = get_features_from_game(singlegame, singlegamemeta, singlegameST, singleendplayers=singleendplayers)
+
+                vpdf = vpdf.append(vpforgame, ignore_index=True)
+                featdf = featdf.append(featsforgame, ignore_index=True)
+
+    print(f"no of unique games in table is: {len(list(pd.unique(vpdf['game'])))}")
+
+    vpdf.to_csv(vpdfdir)
+    featdf.to_csv(featdfdir)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Input DVC params.')
+    parser.add_argument('--params', type=str)
+    args = parser.parse_args()
+    paramsdir = args.params
+
+    with open(paramsdir, 'r') as fd:
+        params = yaml.safe_load(fd)
+
+    vpdfdir = params['prepare']['vp-data-dir']
+    featdfdir = params['prepare']['feature-data-dir']
+    playerdropdir = params['prepare']['player-drop-dir']
+    folderlocation = params['prepare']['folderlocation']
+
+    main(folderlocation, vpdfdir, featdfdir, playerdropdir)

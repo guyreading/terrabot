@@ -1,11 +1,18 @@
 schema: '2.0'
 stages:
   prepare:
-    cmd: papermill faction-picker-bot\creatingVPdata.ipynb -
+    cmd: python faction-picker-bot\make_data.py --params params.yaml
     deps:
     - path: faction-picker-bot\creatingVPdata.ipynb
       md5: bf8c884a44f23f55a61222eb9d880c62
       size: 148883
+    params:
+      params.yaml:
+        prepare:
+          folderlocation: D:/PycharmProjects/TerraBot/terra-mystica
+          vp-data-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/vpdata.csv
+          feature-data-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/featdata.csv
+          player-drop-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/unfinishedgames.csv
     outs:
     - path: data\faction-picker-bot\featdata.csv
       md5: 5dda00d27d92c9ac4c288cfcb5895e00
@@ -13,3 +20,22 @@ stages:
     - path: data\faction-picker-bot\vpdata.csv
       md5: b532b6155ebb08303c7fa51b7f5346a1
       size: 5433991
+  prepare-step2:
+    cmd: python faction-picker-bot\create_individual_datasets.py --params params.yaml
+    deps:
+    - path: faction-picker-bot\create_individual_datasets.py
+      md5: 10723318f05e9075d994357bed13907a
+      size: 1233
+    params:
+      params.yaml:
+        prepare:
+          folderlocation: D:/PycharmProjects/TerraBot/terra-mystica
+          vp-data-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/vpdata.csv
+          feature-data-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/featdata.csv
+          player-drop-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/unfinishedgames.csv
+        prepare-step2:
+          pickle-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/each-faction-data.pkl
+    outs:
+    - path: data\faction-picker-bot\each-faction-data.pkl
+      md5: f2fbdce67b5bd6c5f2867638f04b8556
+      size: 219407019
