@@ -56,3 +56,17 @@ stages:
       md5: 93c1c33169fee7b82f8e071b10eb8e8b.dir
       size: 186843489
       nfiles: 14
+  create-metrics:
+    cmd: python faction-picker-bot\create_metrics.py --params params.yaml
+    deps:
+    - path: faction-picker-bot\create_metrics.py
+      md5: 99ee77db58c7d0d1239ea4003009d4bb
+      size: 2600
+    outs:
+    - path: data\faction-picker-bot\metrics\
+      md5: 8351d189deae6a4bfd80c197ac0518b2.dir
+      size: 463244
+      nfiles: 14
+    - path: data\faction-picker-bot\model_metrics.json
+      md5: 2f2314cf67b7169894fd80779fd2dfe5
+      size: 439

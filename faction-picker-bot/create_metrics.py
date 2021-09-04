@@ -2,34 +2,39 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import lightgbm as lgb
 import numpy as np
+from sklearn import metrics
 import argparse
 import pickle
+import json
 import yaml
 import os
 
 
-def main(pickledir, modeldir, metricsdir):
+def main(pickledir, modeldir, metricsdir, metricsdir2):
     Path(metricsdir).mkdir(parents=True, exist_ok=True)
     models = os.listdir(modeldir)
+    model_metrics = dict()
 
     with open(pickledir, 'rb') as fd:
         each_faction_dataset = pickle.load(fd)
 
     for model in models:
         # load model
-        modelfile = Path(modeldir, model)
+        modelfile = modeldir + model
         faction = model.split('_')[0]
         bst = lgb.Booster(model_file=modelfile)  # init model
 
         # make the data
         Xdata = each_faction_dataset[faction]['features']
-        Xdata = Xdata.drop(['Unnamed: 0', 'game'])
+        Xdata = Xdata.drop(['Unnamed: 0', 'game'], axis=1)
         traindata = lgb.Dataset(Xdata, label=np.array(each_faction_dataset[faction]['vp']))
 
         # get predictions & residuals
         ypred = bst.predict(Xdata)
         residuals = np.array(ypred) - np.array(each_faction_dataset[faction]['vp'])
         avgres = np.mean(residuals)
+        MAE = metrics.mean_absolute_error(ypred, np.array(each_faction_dataset[faction]['vp']))
+        model_metrics[faction] = MAE
 
         # make plots
         line = list(range(250))
@@ -47,7 +52,10 @@ def main(pickledir, modeldir, metricsdir):
         h = ax2.plot([avgres, avgres], [0, 600], 'r--')
 
         # save plot
-        plt.savefig(f'{faction} charts.png')
+        plt.savefig(metricsdir + f'{faction} charts.png')
+
+    with open(metricsdir2, 'w') as fp:
+        json.dump(model_metrics, fp)
 
 
 if __name__ == '__main__':
@@ -62,5 +70,6 @@ if __name__ == '__main__':
     pickledir = params['prepare-step2']['pickle-dir']
     modeldir = params['training']['model-dir']
     metricsdir = params['create-metrics']['metrics-dir']
+    metricsdir2 = params['create-metrics']['metrics-dir2']
 
-    main(pickledir, modeldir, metricsdir)
+    main(pickledir, modeldir, metricsdir, metricsdir2)
