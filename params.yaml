@@ -5,3 +5,9 @@ prepare:
   player-drop-dir: 'D://PycharmProjects/TerraBot/data/faction-picker-bot/unfinishedgames.csv'
 prepare-step2:
   pickle-dir: 'D://PycharmProjects/TerraBot/data/faction-picker-bot/each-faction-data.pkl'
+training:
+  model-dir: 'data/faction-picker-bot/models/'
+  num-rounds: 500
+  num-leaves: 300
+create-metrics:
+  metrics-dir: 'data/faction-picker-bot/metrics/'

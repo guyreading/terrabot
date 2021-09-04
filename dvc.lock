@@ -39,3 +39,20 @@ stages:
     - path: data\faction-picker-bot\each-faction-data.pkl
       md5: f2fbdce67b5bd6c5f2867638f04b8556
       size: 219407019
+  train:
+    cmd: python faction-picker-bot\train_models.py --params params.yaml
+    deps:
+    - path: faction-picker-bot\train_models.py
+      md5: f7288137a414dce0ff7e6cf82e797d7a
+      size: 1339
+    params:
+      params.yaml:
+        training:
+          model-dir: data/faction-picker-bot/models/
+          num-rounds: 500
+          num-leaves: 300
+    outs:
+    - path: data\faction-picker-bot\models\
+      md5: 93c1c33169fee7b82f8e071b10eb8e8b.dir
+      size: 186843489
+      nfiles: 14
