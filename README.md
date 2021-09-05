@@ -22,15 +22,18 @@ The script used to create this data can be found in this repo at `faction-picker
 I am currently in the process of training a model to pick the best faction based on intial game states.
 
 ## Tools 
-[DVC](https://dvc.org/) for linking the data to github  
-[CML](https://cml.dev/) for ML model development evaluations  
-[Gradio](https://gradio.app/) for interface to model by non-coders
+[DVC](https://dvc.org/) for linking the data to github.  
+[CML](https://cml.dev/) for ML model development evaluations.  
+[Gradio](https://gradio.app/) for interface to model by non-coders.  
+[Shapely](https://github.com/slundberg/shap) for charts of feature importance for each game.
 
 
 ## Currently in Progress
 1. Set up DVC & connect to AWS for practice (done)
 2. add data prep to dvc pipeline (done)
-3. Add extra prep for making data for each action to pipeline
-4. add model training step to dvc pipeline
-5. Add CML for model dev
-6. Add gradio for model interface (Can link this to website?)
+3. Add extra prep for making data for each action to pipeline (done)
+4. add model training step to dvc pipeline (done)
+5. Add shapely metrics viewer (in progress)
+6. Add CML for model dev
+7. Add gradio for model interface (Can link this to website?)
+
