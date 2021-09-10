@@ -5,12 +5,23 @@ import numpy as np
 from sklearn import metrics
 import argparse
 import pickle
+import math
 import json
 import yaml
 import os
 
 
-def main(pickledir, modeldir, metricsdir, metricsdir2):
+def main(params):
+    pickledir = params['prepare-step2']['pickle-dir']
+    modeldir = params['training']['model-dir']
+    metricsdir = params['create-metrics']['metrics-dir']
+    metricsdir2 = params['create-metrics']['metrics-dir2']
+
+    # get dataset split parameters
+    trainsplit = params['training']['train-proportion']
+    valsplit = params['training']['val-proportion']
+    testsplit = params['training']['test-proportion']
+
     Path(metricsdir).mkdir(parents=True, exist_ok=True)
     models = os.listdir(modeldir)
     model_metrics = dict()
@@ -27,13 +38,20 @@ def main(pickledir, modeldir, metricsdir, metricsdir2):
         # make the data
         Xdata = each_faction_dataset[faction]['features']
         Xdata = Xdata.drop(['Unnamed: 0', 'game'], axis=1)
-        traindata = lgb.Dataset(Xdata, label=np.array(each_faction_dataset[faction]['vp']))
+        trainidx = math.ceil(Xdata.shape[0] * trainsplit)
+        validx = math.ceil(Xdata.shape[0] * (trainsplit + valsplit))
+        traindata = Xdata.iloc[:trainidx, :]
+        ytrain = np.array(each_faction_dataset[faction]['vp'].iloc[:trainidx])
+        valdata = Xdata.iloc[trainidx:validx, :]
+        yval = np.array(each_faction_dataset[faction]['vp'].iloc[trainidx:validx])
+        testdata = Xdata.iloc[validx:, :]
+        ytest = np.array(each_faction_dataset[faction]['vp'].iloc[validx:])
 
         # get predictions & residuals
-        ypred = bst.predict(Xdata)
-        residuals = np.array(ypred) - np.array(each_faction_dataset[faction]['vp'])
+        ypred = bst.predict(testdata)
+        residuals = np.array(ypred) - ytest
         avgres = np.mean(residuals)
-        MAE = metrics.mean_absolute_error(ypred, np.array(each_faction_dataset[faction]['vp']))
+        MAE = metrics.mean_absolute_error(ypred, ytest)
         model_metrics[faction] = MAE
 
         # make plots
@@ -41,7 +59,7 @@ def main(pickledir, modeldir, metricsdir, metricsdir2):
         fig, (ax1, ax2) = plt.subplots(1, 2)
         ax1.set_aspect('equal', adjustable='box')
         ax1.set_title(f'{faction} residuals')
-        ax1.plot(ypred, np.array(each_faction_dataset[faction]['vp']), 'bo', line, line, 'r--')
+        ax1.plot(ypred, ytest, 'bo', line, line, 'r--')
         ax1.set(xlabel='y_pred', ylabel='y_real')
         # ax1.xlim([0, 250])
         # ax1.ylim([0, 250])
@@ -67,9 +85,4 @@ if __name__ == '__main__':
     with open(paramsdir, 'r') as fd:
         params = yaml.safe_load(fd)
 
-    pickledir = params['prepare-step2']['pickle-dir']
-    modeldir = params['training']['model-dir']
-    metricsdir = params['create-metrics']['metrics-dir']
-    metricsdir2 = params['create-metrics']['metrics-dir2']
-
-    main(pickledir, modeldir, metricsdir, metricsdir2)
+    main(params)

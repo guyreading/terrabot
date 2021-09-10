@@ -9,6 +9,11 @@ training:
   model-dir: 'data/faction-picker-bot/models/'
   num-rounds: 500
   num-leaves: 300
+  train-proportion: 0.8
+  val-proportion: 0.1
+  test-proportion: 0.1
 create-metrics:
   metrics-dir: 'data/faction-picker-bot/metrics/'
   metrics-dir2: 'data/faction-picker-bot/model_metrics.json'
+shap-metrics:
+  shap-dir: 'data/faction-picker-bot/shap-metrics/'
