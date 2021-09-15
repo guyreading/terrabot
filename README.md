@@ -1,6 +1,12 @@
 # terrabot
 Visualise &amp; play (or advise plays for) Terra Mystica.
 
+## Setting Up The Environment
+1. Clone this repository and cd into it.
+2. Create your TerraBot conda environment:
+`conda env create --file terrabot-conda-file.yml`  
+3. Re-create the most recent faction-picker-bot experiment pipeline: `dvc repro`
+
 ## Organisation of repo
 Currently, there are two main aspects to the repository: 
 1. Visualising map in terms of distance from a faction's home terrain. To run this, clone the repo

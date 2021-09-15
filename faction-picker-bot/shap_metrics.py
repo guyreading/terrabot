@@ -9,7 +9,7 @@ import os
 
 def main(pickledir, modeldir, shapdir):
     Path(shapdir).mkdir(parents=True, exist_ok=True)
-    models = os.listdir('../' + modeldir)
+    models = os.listdir(modeldir)
 
     with open(pickledir, 'rb') as fd:
         each_faction_dataset = pickle.load(fd)

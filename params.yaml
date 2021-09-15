@@ -7,7 +7,7 @@ prepare-step2:
   pickle-dir: 'D://PycharmProjects/TerraBot/data/faction-picker-bot/each-faction-data.pkl'
 training:
   model-dir: 'data/faction-picker-bot/models/'
-  num-rounds: 500
+  num-rounds: 2000
   num-leaves: 300
   train-proportion: 0.8
   val-proportion: 0.1
