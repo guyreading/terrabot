@@ -9,13 +9,13 @@ import yaml
 def main(folderlocation, vpdfdir, featdfdir, playerdropdir):
     """This is the script version of creatingVPdata.ipynb for the dvc pipeline."""
     # load data in
-    gameevents = pd.read_csv(f'{folderlocation}/game_events.csv')
-    games = pd.read_csv(f'{folderlocation}/games.csv')
+    gameevents = pd.read_csv(f'{folderlocation}game_events.csv')
+    games = pd.read_csv(f'{folderlocation}games.csv')
     gameslist = list(pd.unique(gameevents['game']))
     allfactions = pd.unique(gameevents['faction'])
-    gamescoringtiles = pd.read_csv(f'{folderlocation}/game_scoring_tiles.csv')
-    gameoptions = pd.read_csv(f'{folderlocation}/game_options.csv')
-    stats = pd.read_csv(f'{folderlocation}/stats.csv')
+    gamescoringtiles = pd.read_csv(f'{folderlocation}game_scoring_tiles.csv')
+    gameoptions = pd.read_csv(f'{folderlocation}game_options.csv')
+    stats = pd.read_csv(f'{folderlocation}stats.csv')
 
     # two vp dataset functions
     def makenewdf():

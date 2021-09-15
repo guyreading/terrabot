@@ -1,10 +1,10 @@
 prepare:
-  folderlocation: '/terra-mystica'
-  vp-data-dir: '/data/faction-picker-bot/vpdata.csv'
-  feature-data-dir: '/data/faction-picker-bot/featdata.csv'
-  player-drop-dir: '/data/faction-picker-bot/unfinishedgames.csv'
+  folderlocation: 'terra-mystica/'
+  vp-data-dir: 'data/faction-picker-bot/vpdata.csv'
+  feature-data-dir: 'data/faction-picker-bot/featdata.csv'
+  player-drop-dir: 'data/faction-picker-bot/unfinishedgames.csv'
 prepare-step2:
-  pickle-dir: '/data/faction-picker-bot/each-faction-data.pkl'
+  pickle-dir: 'data/faction-picker-bot/each-faction-data.pkl'
 training:
   model-dir: 'data/faction-picker-bot/models/'
   num-rounds: 2000
