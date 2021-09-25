@@ -37,7 +37,6 @@ def main(params):
 
         # make the data
         Xdata = each_faction_dataset[faction]['features']
-        Xdata = Xdata.drop(['Unnamed: 0', 'game'], axis=1)
         trainidx = math.ceil(Xdata.shape[0] * trainsplit)
         validx = math.ceil(Xdata.shape[0] * (trainsplit + valsplit))
         traindata = Xdata.iloc[:trainidx, :]
@@ -51,6 +50,7 @@ def main(params):
         ypred = bst.predict(testdata)
         residuals = np.array(ypred) - ytest
         avgres = np.mean(residuals)
+        original = np.array(ytest) - np.mean(ytest)
         MAE = metrics.mean_absolute_error(ypred, ytest)
         model_metrics[faction] = MAE
 
@@ -65,9 +65,10 @@ def main(params):
         # ax1.ylim([0, 250])
 
         ax2.set_title(f'{faction} residuals histogram')
+        ax2.hist(original, bins=100, color='r')
         ax2.hist(residuals, bins=100)
         ax2.set(xlabel='Difference +/- of y_pred relative to y_real')
-        h = ax2.plot([avgres, avgres], [0, 600], 'r--')
+        h = ax2.plot([avgres, avgres], [0, 100], 'r--')
 
         # save plot
         plt.savefig(metricsdir + f'{faction} charts.png')

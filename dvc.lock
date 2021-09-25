@@ -9,10 +9,10 @@ stages:
     params:
       params.yaml:
         prepare:
-          folderlocation: D:/PycharmProjects/TerraBot/terra-mystica
-          vp-data-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/vpdata.csv
-          feature-data-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/featdata.csv
-          player-drop-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/unfinishedgames.csv
+          folderlocation: terra-mystica/
+          vp-data-dir: data/faction-picker-bot/vpdata.csv
+          feature-data-dir: data/faction-picker-bot/featdata.csv
+          player-drop-dir: data/faction-picker-bot/unfinishedgames.csv
     outs:
     - path: data\faction-picker-bot\featdata.csv
       md5: 5dda00d27d92c9ac4c288cfcb5895e00
@@ -29,12 +29,12 @@ stages:
     params:
       params.yaml:
         prepare:
-          folderlocation: D:/PycharmProjects/TerraBot/terra-mystica
-          vp-data-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/vpdata.csv
-          feature-data-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/featdata.csv
-          player-drop-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/unfinishedgames.csv
+          folderlocation: terra-mystica/
+          vp-data-dir: data/faction-picker-bot/vpdata.csv
+          feature-data-dir: data/faction-picker-bot/featdata.csv
+          player-drop-dir: data/faction-picker-bot/unfinishedgames.csv
         prepare-step2:
-          pickle-dir: D://PycharmProjects/TerraBot/data/faction-picker-bot/each-faction-data.pkl
+          pickle-dir: data/faction-picker-bot/each-faction-data.pkl
     outs:
     - path: data\faction-picker-bot\each-faction-data.pkl
       md5: f2fbdce67b5bd6c5f2867638f04b8556
@@ -49,27 +49,27 @@ stages:
       params.yaml:
         training:
           model-dir: data/faction-picker-bot/models/
-          num-rounds: 500
+          num-rounds: 200
           num-leaves: 300
           train-proportion: 0.8
           val-proportion: 0.1
           test-proportion: 0.1
     outs:
     - path: data\faction-picker-bot\models\
-      md5: ef3040bb1fd4046dc8a524e8b13d8763.dir
-      size: 184598659
+      md5: f93224750bc46ba59a957a435c802edf.dir
+      size: 73538284
       nfiles: 14
   create-metrics:
     cmd: python faction-picker-bot\create_metrics.py --params params.yaml
     deps:
     - path: faction-picker-bot\create_metrics.py
-      md5: 4aa68d40083c9bc985f8d63f571ec3d5
-      size: 3039
+      md5: 13adb864628d15e33b7725ddee23bd63
+      size: 3141
     outs:
     - path: data\faction-picker-bot\metrics\
-      md5: accfa3991bdcee5a8a1de3ae729f9855.dir
-      size: 462875
+      md5: 270745a4c754bb3bd324962ff5809a04.dir
+      size: 469580
       nfiles: 14
     - path: data\faction-picker-bot\model_metrics.json
-      md5: 4aaf5f640369a6c7de9bad73c9280c56
-      size: 444
+      md5: a382efa0199e525accf88f4783419b0d
+      size: 441

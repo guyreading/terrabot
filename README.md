@@ -6,6 +6,12 @@ Visualise &amp; play (or advise plays for) Terra Mystica.
 2. Create your TerraBot conda environment:
 `conda env create --file terrabot-conda-file.yml`  
 3. Re-create the most recent faction-picker-bot experiment pipeline: `dvc repro`
+4. Look at the dvc `params.yaml` file if you'd like to adjust managed aspects of the current model, 
+   else you can adjust the training script yourself. Looking at `dvc.yaml` will show you
+   the data creation/model training pipeline. After having run `dvc repro` the first time, 
+   on changing the model you can run `dvc metrics show` to compare your model with the current
+   model.
+
 
 ## Organisation of repo
 Currently, there are two main aspects to the repository: 
@@ -39,7 +45,10 @@ I am currently in the process of training a model to pick the best faction based
 2. add data prep to dvc pipeline (done)
 3. Add extra prep for making data for each action to pipeline (done)
 4. add model training step to dvc pipeline (done)
+5. Add training score vs epoch graphs & add this as a dvc plot (in progress)
 5. Add shapely metrics viewer (in progress)
 6. Add CML for model dev
 7. Add gradio for model interface (Can link this to website?)
+8. (Optional) put into/run within a Docker container for easier porting
+9. (Optional) practice training in Sagemaker (+ ECR container?)
 

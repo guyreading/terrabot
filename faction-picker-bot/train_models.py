@@ -30,7 +30,6 @@ def main(params):
 
         # make the data
         Xdata = each_faction_dataset[faction]['features']
-        Xdata = Xdata.drop(['Unnamed: 0', 'game'], axis=1)
         trainidx = math.ceil(Xdata.shape[0] * trainsplit)
         validx = math.ceil(Xdata.shape[0] * (trainsplit + valsplit))
         traindata = Xdata.iloc[:trainidx, :]

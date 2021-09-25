@@ -9,18 +9,27 @@ def main(vpdfdir, featdfdir, pickledir):
     vpdf = pd.read_csv(vpdfdir)
     featdf = pd.read_csv(featdfdir)
 
+    vpdf = vpdf.sort_values('game')
+    featdf = featdf.sort_values('game')
+
     each_faction_dataset = dict()
 
     colnames = list(vpdf.columns)
     factions = [x for x in colnames if x != 'game' and x != 'Unnamed: 0']
 
-    each_faction_dataset = {}
-
     for faction in factions:
         faction_dataset = {}
         indexes = pd.isnull(vpdf[faction])
-        faction_dataset['vp'] = vpdf[faction][~indexes]
-        faction_dataset['features'] = featdf[~indexes]
+        vpdata = pd.Series(index=vpdf['game'][~indexes], data=vpdf[faction][~indexes].values)
+        vpdata.sort_index()
+
+        featdata = featdf[~indexes]
+        featdata.index = featdata['game']
+        featdata = featdata.drop(columns=['game', 'Unnamed: 0'])
+        featdata.sort_index()
+
+        faction_dataset['vp'] = vpdata
+        faction_dataset['features'] = featdata
         each_faction_dataset[faction] = faction_dataset
 
     with open(pickledir, 'wb') as pklfile:
