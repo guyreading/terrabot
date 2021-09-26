@@ -29,14 +29,14 @@ def main(params):
         print(faction)
 
         # make the data
-        Xdata = each_faction_dataset[faction]['features']
+        Xdata = each_faction_dataset[faction]['featuresnp'][:, 1:]  # remove game
         trainidx = math.ceil(Xdata.shape[0] * trainsplit)
         validx = math.ceil(Xdata.shape[0] * (trainsplit + valsplit))
-        traindata = Xdata.iloc[:trainidx, :]
+        traindata = Xdata[:trainidx, :]
         ytrain = np.array(each_faction_dataset[faction]['vp'].iloc[:trainidx])
-        valdata = Xdata.iloc[trainidx:validx, :]
+        valdata = Xdata[trainidx:validx, :]
         yval = np.array(each_faction_dataset[faction]['vp'].iloc[trainidx:validx])
-        testdata = Xdata.iloc[validx:, :]
+        testdata = Xdata[validx:, :]
         ytest = np.array(each_faction_dataset[faction]['vp'].iloc[validx:])
 
         traindata = lgb.Dataset(traindata, label=ytrain)

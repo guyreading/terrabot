@@ -4,6 +4,9 @@ prepare:
   feature-data-dir: 'data/faction-picker-bot/featdata.csv'
   player-drop-dir: 'data/faction-picker-bot/unfinishedgames.csv'
 prepare-step2:
+  round-features: 'one-hot'  # choose between: ['one-hot', 'ordinal']
+  map-features: 'one-hot'  # choose between: ['one-hot', 'ordinal']
+  playercount-features: 'ordinal'  # choose between: ['one-hot', 'ordinal']
   pickle-dir: 'data/faction-picker-bot/each-faction-data.pkl'
 training:
   model-dir: 'data/faction-picker-bot/models/'

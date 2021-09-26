@@ -101,14 +101,13 @@ def main(folderlocation, vpdfdir, featdfdir, playerdropdir):
         newdf = pd.DataFrame([[0] * len(featcolnames)], columns=featcolnames)
 
         # assign game string
-        singlegamemeta.iloc[0]['game']
         newdf['game'].replace({0: singlegamemeta.iloc[0]['game']}, inplace=True)
 
         # find the round tiles for each round
         for gameround in range(1, 7):
-            roundstr = f'r{gameround}'
-            scoretile = roundstr + '_' + singlegameST[singlegameST['round'] == gameround]['tile'].values[0]
-            newdf[scoretile].replace({0: 1}, inplace=True)
+            roundstr = f'round{gameround}tile'
+            scoretile = singlegameST[singlegameST['round'] == gameround]['tile'].values[0]
+            newdf[roundstr].replace({0: scoretile}, inplace=True)
 
         # Boolean of bonus tiles
         uniqueevents = list(pd.unique(singlegameevents['event']))
@@ -116,15 +115,31 @@ def main(folderlocation, vpdfdir, featdfdir, playerdropdir):
         for bontile in bonustiles:
             newdf[bontile].replace({0: 1}, inplace=True)
 
-        # One-hot player count (from 2, 3, 4 or 5 players)
+        # get faction colour
+        factions = pd.unique(singlegameevents['faction'])
+        if 'auren' in factions or 'witches' in factions:
+            newdf['green'].replace({0: 1}, inplace=True)
+        if 'swarmlings' in factions or 'mermaids' in factions:
+            newdf['blue'].replace({0: 1}, inplace=True)
+        if 'cultists' in factions or 'halflings' in factions:
+            newdf['brown'].replace({0: 1}, inplace=True)
+        if 'darklings' in factions or 'alchemists' in factions:
+            newdf['black'].replace({0: 1}, inplace=True)
+        if 'nomads' in factions or 'fakirs' in factions:
+            newdf['yellow'].replace({0: 1}, inplace=True)
+        if 'giants' in factions or 'chaos magicians' in factions:
+            newdf['red'].replace({0: 1}, inplace=True)
+        if 'engineers' in factions or 'dwarves' in factions:
+            newdf['grey'].replace({0: 1}, inplace=True)
+
+        # Number player count (from 2, 3, 4 or 5 players)
         if singleendplayers is None:
             noplayers = singlegamemeta.iloc[0]['player_count']
             print('gamemeta used for player count')
         else:
             noplayers = singleendplayers.iloc[0]['endplayers']
 
-        players = f'{noplayers}players'
-        newdf[players].replace({0: 1}, inplace=True)
+        newdf['no_players'].replace({0: noplayers}, inplace=True)
 
         # one hot of the map used
         mapdict = {'126fe960806d587c78546b30f1a90853b1ada468': 'map1',
@@ -133,7 +148,7 @@ def main(folderlocation, vpdfdir, featdfdir, playerdropdir):
                    }
         basemap = singlegamemeta.iloc[0]['base_map']
         gamemap = mapdict[basemap]
-        newdf[gamemap].replace({0: 1}, inplace=True)
+        newdf['map'].replace({0: gamemap}, inplace=True)
 
         return newdf
 
