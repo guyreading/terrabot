@@ -64,24 +64,26 @@ def main(folderlocation, vpdfdir, featdfdir, playerdropdir):
 
         # One-hot of round tiles, for each round
         for gameround in range(1, 7):
-            roundstr = f'r{gameround}'
-            for tile in uniqueScoreTiles:
-                colnames.append(roundstr + '_' + tile)
+            colnames.append(f'round{gameround}tile')
+
 
         # Boolean of bonus tiles
         for bon in range(1, 11):
             colnames.append(f'BON{bon}')
 
-        # One-hot player count (from 2, 3, 4 or 5 players)
-        for player in range(2, 6):
-            colnames.append(f'{player}players')
+        # One-hot player count
+        colnames.append('no_players')
 
-        # one hot of the map used
+        # Boolean of other colours present on the board
+        colnames = colnames + ['red', 'blue', 'green', 'black', 'grey', 'yellow', 'brown']
+
+
+        # acceptable maps
         """126fe960806d587c78546b30f1a90853b1ada468 - map1
            95a66999127893f5925a5f591d54f8bcb9a670e6 - map2
            be8f6ebf549404d015547152d5f2a1906ae8dd90 - map3
         """
-        colnames = colnames + ['map1', 'map2', 'map3']
+        colnames.append('map')
 
         featuresdf = pd.DataFrame(columns=colnames)
 

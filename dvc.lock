@@ -4,8 +4,8 @@ stages:
     cmd: python faction-picker-bot\make_data.py --params params.yaml
     deps:
     - path: faction-picker-bot\creatingVPdata.ipynb
-      md5: bf8c884a44f23f55a61222eb9d880c62
-      size: 148883
+      md5: a77792d77b611ff3d58c4974c4aeab4d
+      size: 395512
     params:
       params.yaml:
         prepare:
@@ -15,8 +15,8 @@ stages:
           player-drop-dir: data/faction-picker-bot/unfinishedgames.csv
     outs:
     - path: data\faction-picker-bot\featdata.csv
-      md5: 5dda00d27d92c9ac4c288cfcb5895e00
-      size: 18096094
+      md5: b0b19b2ceab05fa6af5536180f1978a5
+      size: 11514409
     - path: data\faction-picker-bot\vpdata.csv
       md5: b532b6155ebb08303c7fa51b7f5346a1
       size: 5433991
@@ -63,13 +63,13 @@ stages:
     cmd: python faction-picker-bot\create_metrics.py --params params.yaml
     deps:
     - path: faction-picker-bot\create_metrics.py
-      md5: 13adb864628d15e33b7725ddee23bd63
-      size: 3141
+      md5: 4874b4f684c39972bd23f0789260bbbf
+      size: 3081
     outs:
     - path: data\faction-picker-bot\metrics\
-      md5: 270745a4c754bb3bd324962ff5809a04.dir
-      size: 469580
+      md5: 26b33d92026d9e683566b9f11afd8689.dir
+      size: 457514
       nfiles: 14
     - path: data\faction-picker-bot\model_metrics.json
-      md5: a382efa0199e525accf88f4783419b0d
-      size: 441
+      md5: e5db66bc6be3d091057406dbb62c1035
+      size: 440

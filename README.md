@@ -37,7 +37,8 @@ I am currently in the process of training a model to pick the best faction based
 [DVC](https://dvc.org/) for linking the data to github.  
 [CML](https://cml.dev/) for ML model development evaluations.  
 [Gradio](https://gradio.app/) for interface to model by non-coders.  
-[Shapely](https://github.com/slundberg/shap) for charts of feature importance for each game.
+[Shapely](https://github.com/slundberg/shap) for charts of feature importance for each game.  
+[MACEst](https://github.com/oracle/macest) for working out certainty values
 
 
 ## Currently in Progress
@@ -49,6 +50,7 @@ I am currently in the process of training a model to pick the best faction based
 5. Add shapely metrics viewer (in progress)
 6. Add CML for model dev
 7. Add gradio for model interface (Can link this to website?)
+8. Use MACEst for working out certainty values
 8. (Optional) put into/run within a Docker container for easier porting
 9. (Optional) practice training in Sagemaker (+ ECR container?)
 
