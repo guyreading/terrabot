@@ -24,8 +24,8 @@ stages:
     cmd: python faction-picker-bot\create_individual_datasets.py --params params.yaml
     deps:
     - path: faction-picker-bot\create_individual_datasets.py
-      md5: 10723318f05e9075d994357bed13907a
-      size: 1233
+      md5: 242509b4a832522d8f82335e610bca58
+      size: 3028
     params:
       params.yaml:
         prepare:
@@ -34,30 +34,34 @@ stages:
           feature-data-dir: data/faction-picker-bot/featdata.csv
           player-drop-dir: data/faction-picker-bot/unfinishedgames.csv
         prepare-step2:
+          round-features: one-hot
+          map-features: one-hot
+          playercount-features: ordinal
           pickle-dir: data/faction-picker-bot/each-faction-data.pkl
     outs:
     - path: data\faction-picker-bot\each-faction-data.pkl
-      md5: f2fbdce67b5bd6c5f2867638f04b8556
-      size: 219407019
+      md5: 3111ad3bd8d6258d3fdcf7f362317d66
+      size: 280269834
   train:
     cmd: python faction-picker-bot\train_models.py --params params.yaml
     deps:
     - path: faction-picker-bot\train_models.py
-      md5: 7257239bc8e08c8fec70841e3e925200
-      size: 2119
+      md5: 5323ca9bfa740fc94ee5bd80653f6a40
+      size: 2068
     params:
       params.yaml:
         training:
           model-dir: data/faction-picker-bot/models/
-          num-rounds: 200
-          num-leaves: 300
+          num-rounds: 300
+          num-leaves: 7
+          max-depth: 4
           train-proportion: 0.8
           val-proportion: 0.1
           test-proportion: 0.1
     outs:
     - path: data\faction-picker-bot\models\
-      md5: f93224750bc46ba59a957a435c802edf.dir
-      size: 73538284
+      md5: 53a8e5326f34ef39995c8fe6b2d9d48e.dir
+      size: 3312351
       nfiles: 14
   create-metrics:
     cmd: python faction-picker-bot\create_metrics.py --params params.yaml

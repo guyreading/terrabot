@@ -11,10 +11,10 @@ def featurise_features(featdf, params):
     # adjust features dataset for chosen encoding
     X = featdf.to_numpy()
     game = X[:, :1]
-    rounddata = X[:, 1:6]
-    bontiles = X[:, 6:16]
-    playerdata = X[:, 16:17]
-    colours = X[:, 17:23]
+    rounddata = X[:, 1:7]
+    bontiles = X[:, 7:16]
+    playerdata = X[:, 17:18]
+    colours = X[:, 18:25]
     mapdata = X[:, -1:]
 
     onehot_encoder = OneHotEncoder(sparse=False)
@@ -48,6 +48,7 @@ def main(params):
     vpdf = vpdf.sort_values('game')
     featdf = featdf.sort_values('game')
 
+    featdf = featdf.drop(columns=['Unnamed: 0'])
     featdatapd = featurise_features(featdf, params)
 
     each_faction_dataset = dict()
@@ -63,7 +64,7 @@ def main(params):
 
         featdata = featdf[~indexes]
         featdata.index = featdata['game']
-        featdata = featdata.drop(columns=['game', 'Unnamed: 0'])
+        featdata = featdata.drop(columns=['game'])
         featdata.sort_index()
         featdata2 = featdatapd[~indexes, :]
         featdata2 = featdata2[featdata2[:, 0].argsort()]  # sort by games (first col)

@@ -33,12 +33,12 @@ stages:
       - faction-picker-bot\create_metrics.py
     metrics:
       - data\faction-picker-bot\model_metrics.json
-#  get-shap-values:
-#    cmd: python faction-picker-bot\shap_metrics.py --params params.yaml
-#    outs:
-#      - data\faction-picker-bot\shap-metrics\
-#    deps:
-#      - data\faction-picker-bot\shap_metrics.py
+  #  get-shap-values:
+  #    cmd: python faction-picker-bot\shap_metrics.py --params params.yaml
+  #    outs:
+  #      - data\faction-picker-bot\shap-metrics\
+  #    deps:
+  #      - data\faction-picker-bot\shap_metrics.py
 
 
 
