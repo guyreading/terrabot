@@ -49,7 +49,7 @@ def main(params):
     featdf = featdf.sort_values('game')
 
     featdf = featdf.drop(columns=['Unnamed: 0'])
-    featdatapd = featurise_features(featdf, params)
+    featdatanp = featurise_features(featdf, params)
 
     each_faction_dataset = dict()
 
@@ -66,7 +66,7 @@ def main(params):
         featdata.index = featdata['game']
         featdata = featdata.drop(columns=['game'])
         featdata.sort_index()
-        featdata2 = featdatapd[~indexes, :]
+        featdata2 = featdatanp[~indexes, :]
         featdata2 = featdata2[featdata2[:, 0].argsort()]  # sort by games (first col)
 
         faction_dataset['vp'] = vpdata

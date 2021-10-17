@@ -23,7 +23,7 @@ def main(params):
     trainsplit = params['training']['train-proportion']
     valsplit = params['training']['val-proportion']
     testsplit = params['training']['test-proportion']
-    assert trainsplit + valsplit + testsplit == 1, "dataset train/val/test split /= 1"
+    assert trainsplit + valsplit + testsplit == 1, "dataset train/val/test split != 1"
 
     for faction in each_faction_dataset.keys():
         print(faction)

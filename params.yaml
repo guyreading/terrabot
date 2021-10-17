@@ -12,7 +12,7 @@ training:
   model-dir: 'data/faction-picker-bot/models/'
   num-rounds: 300
   num-leaves: 7
-  max-depth: 4
+  max-depth: 7
   train-proportion: 0.8
   val-proportion: 0.1
   test-proportion: 0.1
