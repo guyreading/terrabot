@@ -3,6 +3,7 @@ from pathlib import Path
 import lightgbm as lgb
 import numpy as np
 from sklearn import metrics
+import pandas as pd
 import argparse
 import pickle
 import math
@@ -14,8 +15,10 @@ import os
 def main(params):
     pickledir = params['prepare-step2']['pickle-dir']
     modeldir = params['training']['model-dir']
+    modelmetricsdir = params['training']['model-metrics-dir']
     metricsdir = params['create-metrics']['metrics-dir']
     metricsdir2 = params['create-metrics']['metrics-dir2']
+    metricsdir3 = params['create-metrics']['metrics-dir3']
 
     # get dataset split parameters
     trainsplit = params['training']['train-proportion']
@@ -25,6 +28,7 @@ def main(params):
     Path(metricsdir).mkdir(parents=True, exist_ok=True)
     models = os.listdir(modeldir)
     model_metrics = dict()
+    model_plot_pd = pd.DataFrame()
 
     with open(pickledir, 'rb') as fd:
         each_faction_dataset = pickle.load(fd)
@@ -34,15 +38,11 @@ def main(params):
         modelfile = modeldir + model
         faction = model.split('_')[0]
         bst = lgb.Booster(model_file=modelfile)  # init model
+        evaldict = pickle.load(open(modelmetricsdir + f'{faction}_results.pkl', 'rb'))
 
         # make the data
         Xdata = each_faction_dataset[faction]['featuresnp'][:, 1:]  # remove game
-        trainidx = math.ceil(Xdata.shape[0] * trainsplit)
         validx = math.ceil(Xdata.shape[0] * (trainsplit + valsplit))
-        traindata = Xdata[:trainidx, :]
-        ytrain = np.array(each_faction_dataset[faction]['vp'].iloc[:trainidx])
-        valdata = Xdata[trainidx:validx, :]
-        yval = np.array(each_faction_dataset[faction]['vp'].iloc[trainidx:validx])
         testdata = Xdata[validx:, :]
         ytest = np.array(each_faction_dataset[faction]['vp'].iloc[validx:])
 
@@ -56,7 +56,8 @@ def main(params):
 
         # make plots
         line = list(range(250))
-        fig, (ax1, ax2) = plt.subplots(1, 2)
+        fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+        fig.set_size_inches(12, 4.8)
         ax1.set_aspect('equal', adjustable='box')
         ax1.set_title(f'{faction} residuals')
         ax1.plot(ypred, ytest, 'bo', line, line, 'r--')
@@ -70,11 +71,24 @@ def main(params):
         ax2.set(xlabel='Difference +/- of y_pred relative to y_real')
         h = ax2.plot([avgres, avgres], [0, 100], 'r--')
 
+        ax3.set_title(f'{faction} training plot')
+        trainmetrics = evaldict['train']['l2']
+        valmetrics = evaldict['validation']['l2']
+        ax3.plot(range(len(trainmetrics)), trainmetrics, 'r', label='train')
+        ax3.plot(range(len(valmetrics)), valmetrics, 'g', label='validation')
+        ax3.set(xlabel='train step', ylabel='l2 loss')
+        ax3.legend()
+        model_plot_pd[faction] = valmetrics
+
+        plt.subplots_adjust(wspace=0.8)
+
         # save plot
-        plt.savefig(metricsdir + f'{faction} charts.png')
+        plt.savefig(metricsdir + f'/{faction} charts.png')
 
     with open(metricsdir2, 'w') as fp:
         json.dump(model_metrics, fp)
+
+    model_plot_pd.to_csv(metricsdir3)
 
 
 if __name__ == '__main__':

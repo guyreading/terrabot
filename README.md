@@ -41,17 +41,17 @@ I am currently in the process of training a model to pick the best faction based
 [MACEst](https://github.com/oracle/macest) for working out certainty values
 
 
-## Currently in Progress
-1. Set up DVC & connect to AWS for practice (done)
-2. add data prep to dvc pipeline (done)
-3. Add extra prep for making data for each action to pipeline (done)
-4. add model training step to dvc pipeline (done)
-5. Adding extra options for making data (ordinal vs one-hot) (in progress)
-6. Add training score vs epoch graphs & add this as a dvc plot (in progress)
-7. Add shapely metrics viewer (in progress)
-8. Add CML for model dev
-9. Add gradio for model interface (Can link this to website?)
-10. Use MACEst for working out certainty values
-11. (Optional) put into/run within a Docker container for easier porting
-12. (Optional) practice training in Sagemaker (+ ECR container?)
+## Current Work Progress/Plan
+1. [x] Set up DVC & connect to AWS for practice
+2. [x] add data prep to dvc pipeline
+3. [x] Add extra prep for making data for each action to pipeline
+4. [x] add model training step to dvc pipeline
+5. [x] Adding extra options for making data (ordinal vs one-hot)
+6. [x] Add training score vs epoch graphs & add this as a dvc plot
+7. [ ] Add shapely metrics viewer
+8. [ ] Add CML for model dev
+9. [ ] Add gradio for model interface (Can link this to website?)
+10. [ ] Use MACEst for working out certainty values
+11. [ ] (Optional) put into/run within a Docker container for easier collaboration
+12. [ ] (Optional) practice training in Sagemaker (+ ECR container?)
 
