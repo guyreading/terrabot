@@ -46,27 +46,74 @@ def main(params):
         # testdata = Xdata[validx:, :]
         # ytest = np.array(each_faction_dataset[faction]['vp'].iloc[validx:])
 
-        traindata = lgb.Dataset(traindata, label=ytrain)
-        valdata = lgb.Dataset(valdata, label=yval)
+        traindataset = lgb.Dataset(traindata, label=ytrain)
+        valdataset = lgb.Dataset(valdata, label=yval)
 
-        # train model
-        evaldict = {}
-        bst = lgb.train(param,
-                        traindata,
-                        num_round,
-                        valid_sets=[valdata, traindata],
-                        valid_names=['validation', 'train'],
-                        early_stopping_rounds=200,
-                        evals_result=evaldict,
-                        verbose_eval=False
-                        )
+        path = 'path2'
+
+        if path == 'path1':
+            # PATH 1
+            # train model
+            evaldict = {}
+            model = lgb.train(param,
+                              traindataset,
+                              num_round,
+                              valid_sets=[valdataset, traindataset],
+                              valid_names=['validation', 'train'],
+                              early_stopping_rounds=200,
+                              evals_result=evaldict,
+                              verbose_eval=False
+                              )
+        elif path == 'path2':
+            # PATH 2:
+            increment = round(len(traindata) * 0.29)
+            data_idx = increment
+            split_rounds = params['training']['split-rounds']
+            evaldictslist = []
+
+            model = lgb.LGBMRegressor(
+                boosting_type=params['training']['boosting-type'],
+                n_estimators=num_round,
+                learning_rate=0.1,
+                num_leaves=params['training']['num-leaves'],
+                max_depth=params['training']['max-depth'],
+            )
+
+            for roundno, singleround in enumerate(range(split_rounds)):
+                print(f'round: {roundno}')
+                evaldict = {}
+                evalcallback = lgb.record_evaluation(evaldict)
+                start = data_idx % len(traindata)
+                data_idx += increment
+                end = data_idx % len(traindata)
+                if end < start:
+                    xsubset = np.vstack((traindata[start:, :], traindata[:end, :]))
+                    ysubset = np.concatenate((ytrain[start:], ytrain[:end]))
+                else:
+                    xsubset = traindata[start:end, :]
+                    ysubset = ytrain[start:end]
+
+                model.fit(
+                    xsubset, ysubset,
+                    eval_set=[(valdata, yval), (traindata, ytrain)],
+                    eval_names=['validation', 'train'],
+                    verbose=False,
+                    callbacks=[evalcallback],
+                    )
+
+                evaldictslist.append(evaldict)
+
+        model = model.booster_
 
         # save model
-        bst.save_model(modeldir + f'/{faction}_model.txt')
+        model.save_model(modeldir + f'/{faction}_model.txt')
 
-        # save eval results
-        pickle.dump(evaldict, open(modelmetricsdir + f'{faction}_results.pkl', 'wb'))
-
+        if path == 'path1':
+            # save eval results
+            pickle.dump(evaldict, open(modelmetricsdir + f'{faction}_results.pkl', 'wb'))
+        if path == 'path2':
+            # save eval results
+            pickle.dump(evaldictslist, open(modelmetricsdir + f'{faction}_results.pkl', 'wb'))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Input DVC params.')

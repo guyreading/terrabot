@@ -11,13 +11,14 @@ prepare-step2:
 training:
   model-dir: 'data/faction-picker-bot/models/'
   model-metrics-dir: 'data/faction-picker-bot/model-metrics/'
-  num-rounds: 3000
-  num-leaves: 7
-  max-depth: 7
+  num-rounds: 300
+  num-leaves: 50
+  max-depth: 20
   boosting-type: 'dart'
   train-proportion: 0.8
   val-proportion: 0.1
   test-proportion: 0.1
+  split-rounds: 15
 create-metrics:
   metrics-dir: 'data/faction-picker-bot/metrics/'
   metrics-dir2: 'data/faction-picker-bot/model_metrics.json'

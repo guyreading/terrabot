@@ -48,10 +48,11 @@ I am currently in the process of training a model to pick the best faction based
 4. [x] add model training step to dvc pipeline
 5. [x] Adding extra options for making data (ordinal vs one-hot)
 6. [x] Add training score vs epoch graphs & add this as a dvc plot
-7. [ ] Add shapely metrics viewer
+7. [ ] Make model MSE better (currently overfitting)
 8. [ ] Add CML for model dev
 9. [ ] Add gradio for model interface (Can link this to website?)
 10. [ ] Use MACEst for working out certainty values
 11. [ ] (Optional) put into/run within a Docker container for easier collaboration
 12. [ ] (Optional) practice training in Sagemaker (+ ECR container?)
+13. [ ] Add shapely metrics viewer
 

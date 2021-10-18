@@ -71,9 +71,18 @@ def main(params):
         ax2.set(xlabel='Difference +/- of y_pred relative to y_real')
         h = ax2.plot([avgres, avgres], [0, 100], 'r--')
 
+        # get data for fig 3
+        if type(evaldict) == list:
+            trainmetrics = []
+            valmetrics = []
+            for eachevaldict in evaldict:
+                trainmetrics += eachevaldict['train']['l2']
+                valmetrics += eachevaldict['validation']['l2']
+        else:
+            trainmetrics = evaldict['train']['l2']
+            valmetrics = evaldict['validation']['l2']
+
         ax3.set_title(f'{faction} training plot')
-        trainmetrics = evaldict['train']['l2']
-        valmetrics = evaldict['validation']['l2']
         ax3.plot(range(len(trainmetrics)), trainmetrics, 'r', label='train')
         ax3.plot(range(len(valmetrics)), valmetrics, 'g', label='validation')
         ax3.set(xlabel='train step', ylabel='l2 loss')
