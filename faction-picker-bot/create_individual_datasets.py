@@ -10,11 +10,11 @@ import numpy as np
 def featurise_features(featdf, params):
     # adjust features dataset for chosen encoding
     X = featdf.to_numpy()
-    game = X[:, :1]
+    game = featdf.iloc[:, :1]
     rounddata = X[:, 1:7]
-    bontiles = X[:, 7:16]
+    bontiles = featdf.iloc[:, 7:16]
     playerdata = X[:, 17:18]
-    colours = X[:, 18:25]
+    colours = featdf.iloc[:, 18:25]
     mapdata = X[:, -1:]
 
     onehot_encoder = OneHotEncoder(sparse=False)
@@ -22,19 +22,25 @@ def featurise_features(featdf, params):
 
     if params['prepare-step2']['round-features'] is 'ordinal':
         rounddata = ordinal_encoder.fit_transform(rounddata)
+        rounddata = pd.DataFrame(data=rounddata, columns=[f'round{colno}' for colno in range(rounddata.shape[1])])
     else:  # one-hot
         rounddata = onehot_encoder.fit_transform(rounddata)
+        rounddata = pd.DataFrame(data=rounddata, columns=[f'round{colno}' for colno in range(rounddata.shape[1])])
     if params['prepare-step2']['playercount-features'] is 'ordinal':
         playerdata = ordinal_encoder.fit_transform(playerdata)
+        playerdata = pd.DataFrame(data=playerdata, columns=[f'player{colno}' for colno in range(rounddata.shape[1])])
     else:  # one-hot
         playerdata = onehot_encoder.fit_transform(playerdata)
+        playerdata = pd.DataFrame(data=playerdata, columns=[f'player{colno}' for colno in range(rounddata.shape[1])])
     if params['prepare-step2']['map-features'] is 'ordinal':
         mapdata = ordinal_encoder.fit_transform(mapdata)
+        mapdata = pd.DataFrame(data=mapdata, columns=[f'map{colno}' for colno in range(rounddata.shape[1])])
     else:  # one-hot
         mapdata = onehot_encoder.fit_transform(mapdata)
+        mapdata = pd.DataFrame(data=mapdata, columns=[f'map{colno}' for colno in range(rounddata.shape[1])])
 
-    featdata = np.hstack((game, rounddata, bontiles, playerdata, colours, mapdata))
-    return featdata
+    featdf = pd.concat([game, rounddata, bontiles, playerdata, colours, mapdata], axis=1)
+    return featdf
 
 
 def main(params):
@@ -49,7 +55,7 @@ def main(params):
     featdf = featdf.sort_values('game')
 
     featdf = featdf.drop(columns=['Unnamed: 0'])
-    featdatanp = featurise_features(featdf, params)
+    featdf = featurise_features(featdf, params)
 
     each_faction_dataset = dict()
 
@@ -66,12 +72,9 @@ def main(params):
         featdata.index = featdata['game']
         featdata = featdata.drop(columns=['game'])
         featdata.sort_index()
-        featdata2 = featdatanp[~indexes, :]
-        featdata2 = featdata2[featdata2[:, 0].argsort()]  # sort by games (first col)
 
         faction_dataset['vp'] = vpdata
         faction_dataset['features'] = featdata
-        faction_dataset['featuresnp'] = featdata2
         each_faction_dataset[faction] = faction_dataset
 
     with open(pickledir, 'wb') as pklfile:
