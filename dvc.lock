@@ -46,25 +46,28 @@ stages:
     cmd: python faction-picker-bot\train_models.py --params params.yaml
     deps:
     - path: faction-picker-bot\train_models.py
-      md5: 3ef1e73ef4c44950c63acd56bb1180c2
-      size: 4669
+      md5: beacc3f93e6114e7b3e4140598ba9152
+      size: 7182
     params:
       params.yaml:
         training:
           model-dir: data/faction-picker-bot/models/
           model-metrics-dir: data/faction-picker-bot/model-metrics/
-          num-rounds: 300
-          num-leaves: 50
-          max-depth: 20
-          boosting-type: dart
+          training-routine: lgb_train_method
           train-proportion: 0.8
           val-proportion: 0.1
           test-proportion: 0.1
           split-rounds: 15
+          num-rounds: 30
+          model-kwargs:
+            num_leaves: 50
+            max_depth: 20
+            boosting_type: dart
+            objective: regression
     outs:
     - path: data\faction-picker-bot\models\
-      md5: 3ee14d275786567c7dde43215024b178.dir
-      size: 18906832
+      md5: 87ed6aa8ea09d8a70ece7a22133a3e17.dir
+      size: 1991254
       nfiles: 14
   create-metrics:
     cmd: python faction-picker-bot\create_metrics.py --params params.yaml
@@ -74,12 +77,12 @@ stages:
       size: 3928
     outs:
     - path: data\faction-picker-bot\metrics\
-      md5: cdfedb4ec698766f070e637e87506b21.dir
-      size: 853696
+      md5: ac379b2befcac01622d4dd79fde18022.dir
+      size: 755664
       nfiles: 14
     - path: data\faction-picker-bot\model_metrics.json
-      md5: 3b964ab4ae3973fb6600693f6df8b684
-      size: 446
+      md5: 585013257595213f1e7034fb5d3466f4
+      size: 445
     - path: data\faction-picker-bot\model_plot_data.csv
-      md5: e9310b0f2973b66a89d005f7f3cf672d
-      size: 76679
+      md5: 141b636a081909075e86f1f2c78ce37c
+      size: 7758

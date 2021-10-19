@@ -20,11 +20,6 @@ def main(params):
 
     # get model parameters
     num_round = params['training']['num-rounds']
-    param = {'num_leaves': params['training']['num-leaves'],
-             'objective': 'regression',
-             'max_depth': params['training']['max-depth'],
-             'boosting_type': params['training']['boosting-type']
-             }
 
     # get dataset split parameters
     trainsplit = params['training']['train-proportion']
@@ -36,84 +31,89 @@ def main(params):
         print(faction)
 
         # make the data
-        Xdata = each_faction_dataset[faction]['featuresnp'][:, 1:]  # remove game
+        Xdata = each_faction_dataset[faction]['features']
         trainidx = math.ceil(Xdata.shape[0] * trainsplit)
         validx = math.ceil(Xdata.shape[0] * (trainsplit + valsplit))
-        traindata = Xdata[:trainidx, :]
+        traindata = Xdata.iloc[:trainidx, :]
         ytrain = np.array(each_faction_dataset[faction]['vp'].iloc[:trainidx])
-        valdata = Xdata[trainidx:validx, :]
+        valdata = Xdata.iloc[trainidx:validx, :]
         yval = np.array(each_faction_dataset[faction]['vp'].iloc[trainidx:validx])
-        # testdata = Xdata[validx:, :]
+        # testdata = Xdata.iloc[validx:, :]
         # ytest = np.array(each_faction_dataset[faction]['vp'].iloc[validx:])
 
-        traindataset = lgb.Dataset(traindata, label=ytrain)
-        valdataset = lgb.Dataset(valdata, label=yval)
-
-        path = 'path2'
-
-        if path == 'path1':
-            # PATH 1
-            # train model
-            evaldict = {}
-            model = lgb.train(param,
-                              traindataset,
-                              num_round,
-                              valid_sets=[valdataset, traindataset],
-                              valid_names=['validation', 'train'],
-                              early_stopping_rounds=200,
-                              evals_result=evaldict,
-                              verbose_eval=False
-                              )
-        elif path == 'path2':
-            # PATH 2:
-            increment = round(len(traindata) * 0.29)
-            data_idx = increment
-            split_rounds = params['training']['split-rounds']
-            evaldictslist = []
-
-            model = lgb.LGBMRegressor(
-                boosting_type=params['training']['boosting-type'],
-                n_estimators=num_round,
-                learning_rate=0.1,
-                num_leaves=params['training']['num-leaves'],
-                max_depth=params['training']['max-depth'],
-            )
-
-            for roundno, singleround in enumerate(range(split_rounds)):
-                print(f'round: {roundno}')
-                evaldict = {}
-                evalcallback = lgb.record_evaluation(evaldict)
-                start = data_idx % len(traindata)
-                data_idx += increment
-                end = data_idx % len(traindata)
-                if end < start:
-                    xsubset = np.vstack((traindata[start:, :], traindata[:end, :]))
-                    ysubset = np.concatenate((ytrain[start:], ytrain[:end]))
-                else:
-                    xsubset = traindata[start:end, :]
-                    ysubset = ytrain[start:end]
-
-                model.fit(
-                    xsubset, ysubset,
-                    eval_set=[(valdata, yval), (traindata, ytrain)],
-                    eval_names=['validation', 'train'],
-                    verbose=False,
-                    callbacks=[evalcallback],
-                    )
-
-                evaldictslist.append(evaldict)
-
-        model = model.booster_
+        # train model - this is running one of the training scripts below
+        training_routine = params['training']['training-routine'] + "(traindata, ytrain, valdata, yval, num_round)"
+        model, evaldict = eval(training_routine)
 
         # save model
         model.save_model(modeldir + f'/{faction}_model.txt')
 
-        if path == 'path1':
-            # save eval results
-            pickle.dump(evaldict, open(modelmetricsdir + f'{faction}_results.pkl', 'wb'))
-        if path == 'path2':
-            # save eval results
-            pickle.dump(evaldictslist, open(modelmetricsdir + f'{faction}_results.pkl', 'wb'))
+        # save eval results
+        pickle.dump(evaldict, open(modelmetricsdir + f'{faction}_results.pkl', 'wb'))
+
+
+def lgb_train_method(traindata, ytrain, valdata, yval, num_round):
+    """Train a LightGBM from the train script"""
+    traindataset = lgb.Dataset(traindata, label=ytrain)
+    valdataset = lgb.Dataset(valdata, label=yval)
+
+    model_kwargs = params['training']['model-kwargs']
+
+    # train model
+    evaldict = {}
+    model = lgb.train(model_kwargs,
+                      traindataset,
+                      num_round,
+                      valid_sets=[valdataset, traindataset],
+                      valid_names=['validation', 'train'],
+                      early_stopping_rounds=200,
+                      evals_result=evaldict,
+                      verbose_eval=False
+                      )
+
+    return model, evaldict
+
+
+def lgb_kfolds_scikitlearn(traindata, ytrain, valdata, yval, num_round):
+    """Train a LightGBM with the scikitlearn API + some kfolds"""
+    increment = round(len(traindata) * 0.29)
+    data_idx = increment
+    split_rounds = params['training']['split-rounds']
+    modelkwargs = params['training']['model-kwargs']
+    evaldictslist = []
+
+    model = lgb.LGBMRegressor(
+        n_estimators=num_round,
+        **modelkwargs
+    )
+
+    for roundno in range(split_rounds):
+        evaldict = {}
+        evalcallback = lgb.record_evaluation(evaldict)
+        start = data_idx % len(traindata)
+        data_idx += increment
+        end = data_idx % len(traindata)
+        if end < start:
+            xsubset = np.vstack((traindata.iloc[start:, :], traindata.iloc[:end, :]))
+            ysubset = np.concatenate((ytrain[start:], ytrain[:end]))
+        else:
+            xsubset = traindata.iloc[start:end, :]
+            ysubset = ytrain[start:end]
+
+        model.fit(
+            xsubset, ysubset,
+            eval_set=[(valdata, yval), (traindata, ytrain)],
+            eval_names=['validation', 'train'],
+            verbose=False,
+            callbacks=[evalcallback],
+        )
+
+        evaldictslist.append(evaldict)
+
+    model = model.booster_
+
+    return model, evaldictslist
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Input DVC params.')

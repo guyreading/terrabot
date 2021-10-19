@@ -31,6 +31,7 @@ stages:
       - data\faction-picker-bot\metrics\
     deps:
       - faction-picker-bot\create_metrics.py
+      - data\faction-picker-bot\models\
     metrics:
       - data\faction-picker-bot\model_metrics.json
     plots:
