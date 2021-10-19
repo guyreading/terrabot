@@ -11,17 +11,19 @@ prepare-step2:
 training:
   model-dir: 'data/faction-picker-bot/models/'
   model-metrics-dir: 'data/faction-picker-bot/model-metrics/'
-  training-routine: 'lgb_kfolds_scikitlearn'
+  training-routine: 'lgb_train_method'  # either lgb_train_method or lgb_kfolds_scikitlearn
   train-proportion: 0.8
   val-proportion: 0.1
   test-proportion: 0.1
-  split-rounds: 1500
-  num-rounds: 3
+  split-rounds: 1500  # not used
+  num-rounds: 5000
   model-kwargs:
-    num_leaves: 50
-    max_depth: 20
+    num_leaves: 10
+    learning_rate: 0.01
+    max_depth: 7
     boosting_type: 'dart'
     objective: 'regression'
+    feature_fraction: 0.6
 create-metrics:
   metrics-dir: 'data/faction-picker-bot/metrics/'
   metrics-dir2: 'data/faction-picker-bot/model_metrics.json'

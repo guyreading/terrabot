@@ -13,6 +13,8 @@ stages:
     outs:
       - data\faction-picker-bot\each-faction-data.pkl
     deps:
+      - data\faction-picker-bot\featdata.csv
+      - data\faction-picker-bot\vpdata.csv
       - faction-picker-bot\create_individual_datasets.py
     params:
       - prepare
@@ -22,6 +24,7 @@ stages:
     outs:
       - data\faction-picker-bot\models\
     deps:
+      - data\faction-picker-bot\each-faction-data.pkl
       - faction-picker-bot\train_models.py
     params:
       - training
