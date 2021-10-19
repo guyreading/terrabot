@@ -28,16 +28,16 @@ def featurise_features(featdf, params):
         rounddata = pd.DataFrame(data=rounddata, columns=[f'round{colno}' for colno in range(rounddata.shape[1])])
     if params['prepare-step2']['playercount-features'] is 'ordinal':
         playerdata = ordinal_encoder.fit_transform(playerdata)
-        playerdata = pd.DataFrame(data=playerdata, columns=[f'player{colno}' for colno in range(rounddata.shape[1])])
+        playerdata = pd.DataFrame(data=playerdata, columns=[f'player{colno}' for colno in range(playerdata.shape[1])])
     else:  # one-hot
         playerdata = onehot_encoder.fit_transform(playerdata)
-        playerdata = pd.DataFrame(data=playerdata, columns=[f'player{colno}' for colno in range(rounddata.shape[1])])
+        playerdata = pd.DataFrame(data=playerdata, columns=[f'player{colno}' for colno in range(playerdata.shape[1])])
     if params['prepare-step2']['map-features'] is 'ordinal':
         mapdata = ordinal_encoder.fit_transform(mapdata)
-        mapdata = pd.DataFrame(data=mapdata, columns=[f'map{colno}' for colno in range(rounddata.shape[1])])
+        mapdata = pd.DataFrame(data=mapdata, columns=[f'map{colno}' for colno in range(mapdata.shape[1])])
     else:  # one-hot
         mapdata = onehot_encoder.fit_transform(mapdata)
-        mapdata = pd.DataFrame(data=mapdata, columns=[f'map{colno}' for colno in range(rounddata.shape[1])])
+        mapdata = pd.DataFrame(data=mapdata, columns=[f'map{colno}' for colno in range(mapdata.shape[1])])
 
     featdf = pd.concat([game, rounddata, bontiles, playerdata, colours, mapdata], axis=1)
     return featdf
@@ -64,14 +64,14 @@ def main(params):
 
     for faction in factions:
         faction_dataset = {}
+        vpdf = vpdf.sort_index()
         indexes = pd.isnull(vpdf[faction])
         vpdata = pd.Series(index=vpdf['game'][~indexes], data=vpdf[faction][~indexes].values)
-        vpdata.sort_index()
 
+        featdf = featdf.sort_index()
         featdata = featdf[~indexes]
         featdata.index = featdata['game']
         featdata = featdata.drop(columns=['game'])
-        featdata.sort_index()
 
         faction_dataset['vp'] = vpdata
         faction_dataset['features'] = featdata
