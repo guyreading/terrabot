@@ -41,9 +41,9 @@ def main(params):
         evaldict = pickle.load(open(modelmetricsdir + f'{faction}_results.pkl', 'rb'))
 
         # make the data
-        Xdata = each_faction_dataset[faction]['featuresnp'][:, 1:]  # remove game
+        Xdata = each_faction_dataset[faction]['features']
         validx = math.ceil(Xdata.shape[0] * (trainsplit + valsplit))
-        testdata = Xdata[validx:, :]
+        testdata = Xdata.iloc[validx:, :]
         ytest = np.array(each_faction_dataset[faction]['vp'].iloc[validx:])
 
         # get predictions & residuals
