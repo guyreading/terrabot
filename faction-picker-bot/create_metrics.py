@@ -75,12 +75,14 @@ def main(params):
         if type(evaldict) == list:
             trainmetrics = []
             valmetrics = []
+            dictmetric = list(evaldict[0]['train'].keys())[0]
             for eachevaldict in evaldict:
-                trainmetrics += eachevaldict['train']['l2']
-                valmetrics += eachevaldict['validation']['l2']
+                trainmetrics += eachevaldict['train'][dictmetric]
+                valmetrics += eachevaldict['validation'][dictmetric]
         else:
-            trainmetrics = evaldict['train']['l2']
-            valmetrics = evaldict['validation']['l2']
+            dictmetric = list(evaldict['train'].keys())[0]
+            trainmetrics = evaldict['train'][dictmetric]
+            valmetrics = evaldict['validation'][dictmetric]
 
         ax3.set_title(f'{faction} training plot')
         ax3.plot(range(len(trainmetrics)), trainmetrics, 'r', label='train')
