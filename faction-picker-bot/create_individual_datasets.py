@@ -20,19 +20,19 @@ def featurise_features(featdf, params):
     onehot_encoder = OneHotEncoder(sparse=False)
     ordinal_encoder = OrdinalEncoder()
 
-    if params['prepare-step2']['round-features'] is 'ordinal':
+    if params['prepare-step2']['round-features'] == 'ordinal':
         rounddata = ordinal_encoder.fit_transform(rounddata)
         rounddata = pd.DataFrame(data=rounddata, columns=[f'round{colno}' for colno in range(rounddata.shape[1])])
     else:  # one-hot
         rounddata = onehot_encoder.fit_transform(rounddata)
         rounddata = pd.DataFrame(data=rounddata, columns=[f'round{colno}' for colno in range(rounddata.shape[1])])
-    if params['prepare-step2']['playercount-features'] is 'ordinal':
+    if params['prepare-step2']['playercount-features'] == 'ordinal':
         playerdata = ordinal_encoder.fit_transform(playerdata)
         playerdata = pd.DataFrame(data=playerdata, columns=[f'player{colno}' for colno in range(playerdata.shape[1])])
     else:  # one-hot
         playerdata = onehot_encoder.fit_transform(playerdata)
         playerdata = pd.DataFrame(data=playerdata, columns=[f'player{colno}' for colno in range(playerdata.shape[1])])
-    if params['prepare-step2']['map-features'] is 'ordinal':
+    if params['prepare-step2']['map-features'] == 'ordinal':
         mapdata = ordinal_encoder.fit_transform(mapdata)
         mapdata = pd.DataFrame(data=mapdata, columns=[f'map{colno}' for colno in range(mapdata.shape[1])])
     else:  # one-hot
