@@ -9,35 +9,34 @@ import numpy as np
 
 def featurise_features(featdf, params):
     # adjust features dataset for chosen encoding
-    X = featdf.to_numpy()
     game = featdf.iloc[:, :1]
-    rounddata = X[:, 1:7]
+    rounddata = featdf.iloc[:, 1:7]
     bontiles = featdf.iloc[:, 7:16]
-    playerdata = X[:, 17:18]
+    playerdata = featdf.iloc[:, 17:18]
     colours = featdf.iloc[:, 18:25]
-    mapdata = X[:, -1:]
+    mapdata = featdf.iloc[:, -1:]
 
     onehot_encoder = OneHotEncoder(sparse=False)
     ordinal_encoder = OrdinalEncoder()
 
     if params['prepare-step2']['round-features'] == 'ordinal':
-        rounddata = ordinal_encoder.fit_transform(rounddata)
-        rounddata = pd.DataFrame(data=rounddata, columns=[f'round{colno}' for colno in range(rounddata.shape[1])])
+        rounddatanp = ordinal_encoder.fit_transform(rounddata)
+        rounddata = pd.DataFrame(data=rounddatanp, columns=rounddata.columns)
     else:  # one-hot
-        rounddata = onehot_encoder.fit_transform(rounddata)
-        rounddata = pd.DataFrame(data=rounddata, columns=[f'round{colno}' for colno in range(rounddata.shape[1])])
+        rounddatanp = onehot_encoder.fit_transform(rounddata)
+        rounddata = pd.DataFrame(data=rounddatanp, columns=onehot_encoder.get_feature_names())
     if params['prepare-step2']['playercount-features'] == 'ordinal':
-        playerdata = ordinal_encoder.fit_transform(playerdata)
-        playerdata = pd.DataFrame(data=playerdata, columns=[f'player{colno}' for colno in range(playerdata.shape[1])])
+        playerdatanp = ordinal_encoder.fit_transform(playerdata)
+        playerdata = pd.DataFrame(data=playerdatanp, columns=playerdata.columns)
     else:  # one-hot
-        playerdata = onehot_encoder.fit_transform(playerdata)
-        playerdata = pd.DataFrame(data=playerdata, columns=[f'player{colno}' for colno in range(playerdata.shape[1])])
+        playerdatanp = onehot_encoder.fit_transform(playerdata)
+        playerdata = pd.DataFrame(data=playerdatanp, columns=onehot_encoder.get_feature_names())
     if params['prepare-step2']['map-features'] == 'ordinal':
-        mapdata = ordinal_encoder.fit_transform(mapdata)
-        mapdata = pd.DataFrame(data=mapdata, columns=[f'map{colno}' for colno in range(mapdata.shape[1])])
+        mapdatanp = ordinal_encoder.fit_transform(mapdata)
+        mapdata = pd.DataFrame(data=mapdatanp, columns=mapdata.columns)
     else:  # one-hot
-        mapdata = onehot_encoder.fit_transform(mapdata)
-        mapdata = pd.DataFrame(data=mapdata, columns=[f'map{colno}' for colno in range(mapdata.shape[1])])
+        mapdatanp = onehot_encoder.fit_transform(mapdata)
+        mapdata = pd.DataFrame(data=mapdatanp, columns=onehot_encoder.get_feature_names())
 
     featdf = pd.concat([game, rounddata, bontiles, playerdata, colours, mapdata], axis=1)
     return featdf

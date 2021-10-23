@@ -24,6 +24,7 @@ stages:
     outs:
       - data\faction-picker-bot\models\
     deps:
+      - faction-picker-bot\create_individual_datasets.py
       - data\faction-picker-bot\each-faction-data.pkl
       - faction-picker-bot\train_models.py
     params:
@@ -33,6 +34,7 @@ stages:
     outs:
       - data\faction-picker-bot\metrics\
     deps:
+      - faction-picker-bot\train_models.py
       - faction-picker-bot\create_metrics.py
       - data\faction-picker-bot\models\
     metrics:
