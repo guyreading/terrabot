@@ -56,3 +56,17 @@ I am currently in the process of training a model to pick the best faction based
 12. [ ] (Optional) practice training in Sagemaker (+ ECR container?)
 13. [ ] Add shapely metrics viewer
 
+## Progress (Verbose)
+### Report 23-10-21
+DVC pipeline in place. We have multiple ways of creating the features and LightGBM can be adjusted 
+in the params.yaml, so we never have to touch the code now. A number of experiments have been run 
+however none of them do much better than taking the average score. Multiple LightGBM hyperparameters 
+have been used to test, however no tree can fit much better. The features have been checked (making 
+sure the indexes line up so sample in X = same sample in Y) so it's not the features.
+
+Two thoughts come to mind:
+1. The bad players's games are polluting the data. Bad players will perform badly, regardless of starting 
+conditions. We could remove these players to see if the model performs better.
+2. We could add another feature (or set of featuers) for the faction we want to predict's player skill, 
+plus we could add the opponents' player skill. Thoughts against this is that this feature might dominate 
+   but I really want to find features in the starting state of the game, not that good players will play well.
