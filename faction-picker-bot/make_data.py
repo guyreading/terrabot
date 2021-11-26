@@ -129,7 +129,7 @@ def main(folderlocation, vpdfdir, featdfdir, playerdropdir):
             newdf['black'].replace({0: 1}, inplace=True)
         if 'nomads' in factions or 'fakirs' in factions:
             newdf['yellow'].replace({0: 1}, inplace=True)
-        if 'giants' in factions or 'chaos magicians' in factions:
+        if 'giants' in factions or 'chaosmagicians' in factions:
             newdf['red'].replace({0: 1}, inplace=True)
         if 'engineers' in factions or 'dwarves' in factions:
             newdf['grey'].replace({0: 1}, inplace=True)
