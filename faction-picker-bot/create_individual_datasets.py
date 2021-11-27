@@ -11,7 +11,7 @@ def featurise_features(featdf, params):
     # adjust features dataset for chosen encoding
     game = featdf.iloc[:, :1]
     rounddata = featdf.iloc[:, 1:7]
-    bontiles = featdf.iloc[:, 7:16]
+    bontiles = featdf.iloc[:, 7:17]
     playerdata = featdf.iloc[:, 17:18]
     colours = featdf.iloc[:, 18:25]
     mapdata = featdf.iloc[:, -1:]
