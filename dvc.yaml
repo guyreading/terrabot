@@ -40,7 +40,62 @@ stages:
     metrics:
       - data\faction-picker-bot\model_metrics.json
     plots:
-      - data\faction-picker-bot\model_plot_data.csv
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: witches
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: auren
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: swarmlings
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: mermaids
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: halflings
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: cultists
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: darklings
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: alchemists
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: giants
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: chaosmagicians
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: nomads
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: fakirs
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: engineers
+      - data\faction-picker-bot\model_plot_data.csv:
+          template: smooth
+          x: step
+          y: dwarves
 
   #  get-shap-values:
   #    cmd: python faction-picker-bot\shap_metrics.py --params params.yaml

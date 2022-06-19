@@ -16,14 +16,20 @@ training:
   val-proportion: 0.1
   test-proportion: 0.1
   split-rounds: 1500  # used only when lgb_kfolds_scikitlearn is selected
-  num-rounds: 10000
-  model-kwargs:
-    num_leaves: 50
-    learning_rate: 0.005
-    max_depth: 20
+  num-rounds: 40
+  lgbt-model-kwargs:
+    num_leaves: 31
+    learning_rate: 0.1
+    max_depth: -1
     boosting_type: 'dart'
-    objective: 'regression'
+    objective: 'regression_l1'
     feature_fraction: 0.7
+  nn-model-kwargs:
+    hidden_units: [8, 8]
+    learning_rate: 0.001
+    batch_size: 256
+    num_epochs: 100
+    loss: 'mse'
 create-metrics:
   metrics-dir: 'data/faction-picker-bot/metrics/'
   metrics-dir2: 'data/faction-picker-bot/model_metrics.json'
