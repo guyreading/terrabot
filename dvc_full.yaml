@@ -1,10 +1,24 @@
 stages:
-  load:
-    cmd: python faction-picker-bot\load_from_s3.py --params params.yaml
+  prepare:
+    cmd: python faction-picker-bot\make_data.py --params params.yaml
+    outs:
+      - data\faction-picker-bot\featdata.csv
+      - data\faction-picker-bot\vpdata.csv
+    deps:
+      - faction-picker-bot\creatingVPdata.ipynb
+    params:
+      - prepare
+  prepare-step2:
+    cmd: python faction-picker-bot\create_individual_datasets.py --params params.yaml
     outs:
       - data\faction-picker-bot\each-faction-data.pkl
+    deps:
+      - data\faction-picker-bot\featdata.csv
+      - data\faction-picker-bot\vpdata.csv
+      - faction-picker-bot\create_individual_datasets.py
     params:
-      - load
+      - prepare
+      - prepare-step2
   train:
     cmd: python faction-picker-bot\train_models.py --params params.yaml
     outs:

@@ -76,7 +76,7 @@ stages:
             learning_rate: 0.1
             max_depth: -1
             boosting_type: dart
-            objective: regression_l1
+            objective: regression
             feature_fraction: 0.7
           nn-model-kwargs:
             hidden_units:
@@ -88,15 +88,15 @@ stages:
             loss: mse
     outs:
     - path: data\faction-picker-bot\models\
-      md5: 21b505bb95e36b6f043fccf78e36806c.dir
-      size: 1717063
+      md5: 241920b40103648f6a3d3cef66f0206b.dir
+      size: 1698156
       nfiles: 14
   create-metrics:
     cmd: python faction-picker-bot\create_metrics.py --params params.yaml
     deps:
     - path: data\faction-picker-bot\models\
-      md5: 21b505bb95e36b6f043fccf78e36806c.dir
-      size: 1717063
+      md5: 241920b40103648f6a3d3cef66f0206b.dir
+      size: 1698156
       nfiles: 14
     - path: faction-picker-bot\create_metrics.py
       md5: 991f6ad222ab295c597035b21cf1b859
@@ -106,12 +106,12 @@ stages:
       size: 6342
     outs:
     - path: data\faction-picker-bot\metrics\
-      md5: 5ea14b92fb73dd726f648cdf35edbc9f.dir
-      size: 755108
+      md5: a0e17474aeadc7aab7940532cf38c60a.dir
+      size: 744787
       nfiles: 14
     - path: data\faction-picker-bot\model_metrics.json
-      md5: 6f4aa7a22ee01191832d2387c9af6cfa
-      size: 446
+      md5: 46923d2238a8725c8d9754bd4a81c935
+      size: 443
     - path: data\faction-picker-bot\model_plot_data.csv
-      md5: f46abacec274acd4863a189dbcee6238
-      size: 10829
+      md5: 4f12956123b1fe8f92229a4e5f26a9d4
+      size: 10396
