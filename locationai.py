@@ -1,4 +1,4 @@
-"""this is the function associated with working out where the next best location is for a player to [terraform &]
+"""function associated with working out where the next best location is for a player to [terraform &]
 build on. """
 
 def load_one_game_data(gameno, gameevents=None):
