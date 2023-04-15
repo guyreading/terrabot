@@ -7,13 +7,9 @@ import shap
 import lightgbm as lgb
 import yaml
 import numpy as np
-import sys
 import os
 
-current_path = os.getcwd() + '\\' + __file__
-vis_path = os.path.dirname(os.path.dirname(current_path)) + '\\visualisations'
-sys.path.append(vis_path)
-import terravisualisation as tmvis
+from visualisations import terravisualisation as tmvis
 
 matplotlib.use("Agg")
 
@@ -63,6 +59,8 @@ round_tiles_dict_reverse = {'SCORE1': 'SPADE >> 2',
 
 
 round_tiles = list(round_tiles_dict.keys())
+round6_tiles = round_tiles.copy()
+round6_tiles.remove('SPADE >> 2')
 bontiles = list(bontiledict.keys())
 
 factions = ['Witches', 'Auren', 'Giants', 'Chaos Magicians', 'Darklings', 'Alchemists',
@@ -138,7 +136,7 @@ def display_map(faction, map):
 def predict(*args):
     Xdata, faction = args_to_features(*args)
 
-    modelfile = f'D://PycharmProjects/TerraBot/data/faction-picker-bot/models/{faction}_model.txt'
+    modelfile = f'{os.getcwd()}/data/faction-picker-bot/models/{faction.lower()}_model.txt'
     bst = lgb.Booster(model_file=modelfile)
 
     return f'Final score: {round(bst.predict(Xdata)[0])}'
@@ -146,7 +144,7 @@ def predict(*args):
 
 def interpret(*args):
     Xdata, faction = args_to_features(*args)
-    modelfile = f'D://PycharmProjects/TerraBot/data/faction-picker-bot/models/{faction}_model.txt'
+    modelfile = f'{os.getcwd()}/data/faction-picker-bot/models/{faction.lower()}_model.txt'
     bst = lgb.Booster(model_file=modelfile)
     bst.params["objective"] = "regression"
     explainer = shap.Explainer(bst)
@@ -219,8 +217,8 @@ with gr.Blocks() as demo:
 
             round6_tile = gr.Dropdown(
                 label="Round 6 tile",
-                choices=round_tiles,
-                value=lambda: random.choice(round_tiles),
+                choices=round6_tiles,
+                value=lambda: random.choice(round6_tiles),
             )
 
             bon_tiles_gr = gr.CheckboxGroup(label='Bonus tiles present', choices=list(bontiledict.keys()))
