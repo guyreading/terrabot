@@ -175,7 +175,7 @@ def interpret(*args):
 with gr.Blocks() as demo:
     gr.Markdown("""
     **Predict final faction score given the initial board setup 💰**:  This model uses an lightgbm regression to make prediction. 
-    The [source code for this work is here](https://github.com/guyreading/terrabot/app.py).
+    The [source code for this work is here](https://github.com/guyreading/terrabot/blob/main/app.py).
     """)
     with gr.Row():
         with gr.Column():
