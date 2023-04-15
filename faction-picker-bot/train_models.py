@@ -6,6 +6,12 @@ import pickle
 import yaml
 import math
 
+import tensorflow as tf
+from tensorflow import keras
+# from tensorflow.keras import layers
+# import tensorflow_datasets as tfds
+# import tensorflow_probability as tfp
+
 
 def main(params):
     pickledir = params['prepare-step2']['pickle-dir']
@@ -57,7 +63,7 @@ def lgb_train_method(traindata, ytrain, valdata, yval, num_round):
     traindataset = lgb.Dataset(traindata, label=ytrain)
     valdataset = lgb.Dataset(valdata, label=yval)
 
-    model_kwargs = params['training']['model-kwargs']
+    model_kwargs = params['training']['lgbt-model-kwargs']
 
     # train model
     evaldict = {}
@@ -66,7 +72,7 @@ def lgb_train_method(traindata, ytrain, valdata, yval, num_round):
                       num_round,
                       valid_sets=[valdataset, traindataset],
                       valid_names=['validation', 'train'],
-                      early_stopping_rounds=200,
+                      early_stopping_rounds=10,
                       evals_result=evaldict,
                       verbose_eval=False
                       )
@@ -79,7 +85,7 @@ def lgb_kfolds_scikitlearn(traindata, ytrain, valdata, yval, num_round):
     increment = round(len(traindata) * 0.29)
     data_idx = increment
     split_rounds = params['training']['split-rounds']
-    modelkwargs = params['training']['model-kwargs']
+    modelkwargs = params['training']['lgbt-model-kwargs']
     evaldictslist = []
 
     model = lgb.LGBMRegressor(
@@ -113,6 +119,55 @@ def lgb_kfolds_scikitlearn(traindata, ytrain, valdata, yval, num_round):
     model = model.booster_
 
     return model, evaldictslist
+
+
+def nn_train_method(traindata, ytrain, valdata, yval, num_round):
+    # initialising hyperparameters
+    model_kwargs = params['training']['nn-model-kwargs']
+    batch_size = 256
+    num_epochs = 100
+    
+    # create inputs
+    inputs = {}
+    for feature_name in traindata.columns:
+        inputs[feature_name] = layers.Input(
+            name=feature_name, shape=(1,), dtype=tf.float32
+        )
+    
+    # create model
+    input_values = [value for _, value in sorted(inputs.items())]
+    features = keras.layers.concatenate(input_values)
+    features = layers.BatchNormalization()(features)
+
+    # Create hidden layers with deterministic weights using the Dense layer.
+    for units in model_kwargs['hidden_units']:
+        features = layers.Dense(units, activation="sigmoid")(features)
+    # The output is deterministic: a single point estimate.
+    outputs = layers.Dense(units=1)(features)
+
+    model = keras.Model(inputs=inputs, outputs=outputs)
+
+    # train
+    if model_kwargs['loss'] == 'mse':
+        loss = keras.losses.MeanSquaredError()
+    else:
+        raise('Unsupported loss present')
+
+    model.compile(
+        optimizer=keras.optimizers.RMSprop(learning_rate=model_kwargs['learning_rate']),
+        loss=loss,
+        metrics=[keras.metrics.RootMeanSquaredError()],
+    )
+
+    print("Start training the model...")
+    model.fit(train_dataset, epochs=model_kwargs['num_epochs'], validation_data=test_dataset)
+    print("Model training finished.")
+    _, rmse = model.evaluate(train_dataset, verbose=0)
+    print(f"Train RMSE: {round(rmse, 3)}")
+
+    print("Evaluating model performance...")
+    _, rmse = model.evaluate(test_dataset, verbose=0)
+    print(f"Test RMSE: {round(rmse, 3)}")
 
 
 if __name__ == '__main__':

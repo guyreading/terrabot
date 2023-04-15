@@ -99,6 +99,7 @@ def main(params):
     with open(metricsdir2, 'w') as fp:
         json.dump(model_metrics, fp)
 
+    model_plot_pd['step'] = list(range(model_plot_pd.shape[0]))
     model_plot_pd.to_csv(metricsdir3)
 
 

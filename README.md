@@ -49,12 +49,11 @@ I am currently in the process of training a model to pick the best faction based
 5. [x] Adding extra options for making data (ordinal vs one-hot)
 6. [x] Add training score vs epoch graphs & add this as a dvc plot
 7. [ ] Make model MSE better (currently overfitting)
-8. [ ] Add CML for model dev
-9. [ ] Add gradio for model interface (Can link this to website?)
+8. [ ] Build within CML for model dev
+9. [x] Add gradio for model interface (Can link this to website?)
 10. [ ] Use MACEst for working out certainty values
 11. [ ] (Optional) put into/run within a Docker container for easier collaboration
-12. [ ] (Optional) practice training in Sagemaker (+ ECR container?)
-13. [ ] Add shapely metrics viewer
+12. [x] Add shapely metrics viewer
 
 ## Progress (Verbose)
 ### Report 23-10-21
@@ -70,3 +69,15 @@ conditions. We could remove these players to see if the model performs better.
 2. We could add another feature (or set of featuers) for the faction we want to predict's player skill, 
 plus we could add the opponents' player skill. Thoughts against this is that this feature might dominate 
    but I really want to find features in the starting state of the game, not that good players will play well.
+
+### Report 28-11-22
+Gradio interface was built. It uses the map that can show distance (in digs) from home terrain, it predicts 
+final score for any faction given initial setup using the previously trained models, and it explains where 
+the score comes from using SHAPly values. 
+
+More thought was given to improving model performance (as noted in previous report).
+1. Some games will interfere/contribute towards a players progress more than others. Eg. a 5 player game will 
+affect a players game more than a 2 player game. This may add extra noise relative to starting factions. What's more, 
+different player skill matching will affect each players' games. 
+Good player 1 vs good player 2 will reduce final score of good player 1 relative to playing against a bad player.
+2. Do we take bidding into account? 
