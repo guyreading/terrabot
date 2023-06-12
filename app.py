@@ -301,4 +301,4 @@ with gr.Blocks() as demo:
         outputs=[map_plot],
     )
 
-demo.launch()
+demo.launch(share=True)
